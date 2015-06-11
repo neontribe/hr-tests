@@ -50,7 +50,9 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 					return e.getElementsByClassName("title-and-review")[0].getElementsByTagName("h3")[0].getElementsByTagName("a")[0].innerText;
 				});
 			});
+
 			tmp_cottage_to_check = pickRandomFromArray(properties_returned_names);
+			test.comment("Chosen a random property: " + tmp_cottage_to_check);
 			casper.clickLabel(tmp_cottage_to_check, "a");
 
 			casper.then(function() {
@@ -58,13 +60,31 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 				var page_title = casper.evaluate(function() {
 					return property_page_title = document.getElementsByClassName("property-data")[0].getElementsByTagName("h1")[0].innerText.split("\n")[0];
 				});
-				test.assertTrue(page_title == tmp_cottage_to_check, "Check that we have travelled to correct property page.");
+				test.assertTrue(page_title == tmp_cottage_to_check, "Check that we have travelled to correct property page: " + page_title);
 			});
 		}).then(function() {
 			//Check introduction content
 			var intro_content = this.fetchText(".details figcaption p");
 			test.assertTrue(intro_content.length > 1, "Check if introduction article contains text.");
+			//Verify that the 'read more' button works correctly
+			var tmp_height = casper.evaluate(function() {
+				return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
+			});
 
+			casper.clickLabel("Read more", "a");
+
+			casper.then(function() {
+				//wait for dropdown of read more content
+				casper.wait(1000, function() {
+					var new_height = casper.evaluate(function() {
+						return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
+					});
+					test.assertTrue(new_height > tmp_height, "Check that read more button expands the info section.");	
+				}).then(function() {
+					test.comment("Collapsing read more.")
+					casper.clickLabel("Read more", "a");
+				});
+			});
 
 
 		}).run(function() {
