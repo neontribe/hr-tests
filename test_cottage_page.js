@@ -40,7 +40,6 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 			//Check intro content
 			var intro_content_suffolk = this.fetchText("div[role='note'] > div");
 			test.assertTrue(intro_content_suffolk.length > 1, "Check if introduction article contains text.")
-
 			//Pick a random cottage
 			var names = [];
 			//Grab a list of all cottages displayed on the current page.
@@ -50,11 +49,9 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 					return e.getElementsByClassName("title-and-review")[0].getElementsByTagName("h3")[0].getElementsByTagName("a")[0].innerText;
 				});
 			});
-
 			tmp_cottage_to_check = pickRandomFromArray(properties_returned_names);
 			test.comment("Chosen a random property: " + tmp_cottage_to_check);
 			casper.clickLabel(tmp_cottage_to_check, "a");
-
 			casper.then(function() {
 				test.comment("Travelled to property page.");
 				var page_title = casper.evaluate(function() {
@@ -70,9 +67,9 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 			var tmp_height = casper.evaluate(function() {
 				return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
 			});
-
+			test.comment("Expanding read more.")
 			casper.clickLabel("Read more", "a");
-
+			
 			casper.then(function() {
 				//wait for dropdown of read more content
 				casper.wait(1000, function() {
@@ -80,13 +77,58 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 						return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
 					});
 					test.assertTrue(new_height > tmp_height, "Check that read more button expands the info section.");	
+					
+					casper.clickLabel("Read more", "a");
 				}).then(function() {
 					test.comment("Collapsing read more.")
-					casper.clickLabel("Read more", "a");
+					
+					
+				new_height = casper.evaluate(function() {
+							return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
+				});
+						
+				test.assertTrue(tmp_height < new_height  , "Check that the read more button 'un-expands' the description");
+					
 				});
 			});
+		}).then(function() {
+			//Verify that content tabs work;
+			//Reviews content tab;
+			test.comment("Click reviews tab.");
+			casper.click("a[href='#reviews']");
+			casper.then(function() {
+					var state = this.evaluate(function() {
+						return document.getElementById("reviews").className;
+					});
+					test.assertTrue(state.indexOf("showing") > -1, "Check that the reviews panel has class 'showing'.");
+					test.assertVisible("#reviews", "Check that the reviews panel is visible.");
 
-
+					test.comment("Click Prices and availability tab");
+					casper.click("a[href='#prices-and-availability']");
+				}).then(function() {
+					var state = this.evaluate(function() {
+						return document.getElementById("prices-and-availability").className;
+					});
+					test.assertTrue(state.indexOf("showing") > -1, "Check that the prices and availability panel has class 'showing'.");
+					test.assertVisible("#prices-and-availability", "Check that the prices-and-availability panel is visible.");
+					test.comment("Click town-village-guide tab");
+					casper.click("a[href='#town-village-guide']");
+				}).then(function() {
+					var state = this.evaluate(function() {
+						return document.getElementById("town-village-guide").className;
+					});
+					test.assertTrue(state.indexOf("showing") > -1, "Check that the town and village guide tab has class 'showing'.");
+					test.assertVisible("#town-village-guide", "Check that the town-village-guide is visible.");
+					test.comment("Click property-overview tab");
+					casper.click("a[href='#property-overview']");
+				}).then(function() {
+					var state = this.evaluate(function() {
+						return document.getElementById("property-overview").className;
+					});
+					test.assertTrue(state.indexOf("showing") > -1, "Check that the property-overview tab has class 'showing'.");
+					test.assertVisible("#property-overview", "Check that the property-overview panel is visible.");
+					
+				});
 		}).run(function() {
 			test.done();
 		}).viewport(1920, 1080);
