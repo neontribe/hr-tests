@@ -1,6 +1,6 @@
 //Tests header and footer links for expected behaviour.
-var url = "https://neontabs.neontribe.org/latest/hr/"
-var base_url = "https://neontabs.neontribe.org"
+var url = casper.cli.get("home");
+var base_url = casper.cli.get("baseurl");
 var link_count = 0;
 var tests = link_count;
 
@@ -51,8 +51,10 @@ casper.start(casper.cli.get("target"), function(){
 			});
 			//Check each link in footer "we have holiday cottages..." and "other links..."
 			casper.each(links, function(s, l) {
-				s.thenClick("footer a[href='"+l+"']", function(){
-					test.assertTrue(this.getCurrentUrl() == base_url + l, "Check if correct page loaded from footer: " + base_url + l);	
+				s.thenClick("footer a[href='"+l+"']", function(response){
+					//test.assertTrue(this.getCurrentUrl() == base_url + l, "Check if correct page loaded from footer: " + base_url + l);	
+					test.assert((this.getCurrentUrl() == base_url + l), "Check if correct page loaded from footer: " + base_url + l);
+
 				});
 			});
 		}).run(function() {
