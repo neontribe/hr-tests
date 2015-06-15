@@ -1,6 +1,6 @@
 //Tests all menu blocks for expected behaviour.
 var url = casper.cli.get("target");
-var base_url =  casper.cli.get("target").slice(url.length - 1)[1];
+var base_url =  casper.cli.get("target").substr(0, url.length - 1);
 var link_count = 0;
 var tests = link_count + 10;
 
