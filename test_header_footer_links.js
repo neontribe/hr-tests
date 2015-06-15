@@ -1,6 +1,6 @@
 //Tests header and footer links for expected behaviour.
-var url = casper.cli.get("home");
-var base_url = casper.cli.get("baseurl");
+var url = casper.cli.get("target");
+var base_url =  casper.cli.get("target").slice(url.length - 1)[1];
 var link_count = 0;
 var tests = link_count;
 
