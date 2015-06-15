@@ -83,9 +83,9 @@ casper.start(casper.cli.get("target"), function(){
 				"county": "Norfolk",
 				"postcode":"NR1 3BN",
 				"party": "1",
-				"altsource": "Website",
+				"altsource": "Events",
 				"paymentchoice": "vcredit"
-			});
+			}, true);
 
 			casper.click("input[name='terms']");
 
@@ -93,26 +93,25 @@ casper.start(casper.cli.get("target"), function(){
 				casper.fill("form[id='bookingForm']", {
 					"adultTitle1": "Mr",
 					"adultAge1": "65+"
-				});
+				}, true);
 
+				
+			}).then(function() {
 				casper.waitForSelector("#source", function() {
-
+					casper.fill("form[id='bookingForm']", {
+						"source": "EAM"
+					}, true);
 				});
 			});
 
-			casper.wait(5000);
+			casper.wait(10000);
 					
 		}).then(function() {
-
 			casper.click("a#pay-now");
-
-			casper.then(function() {
-				console.log(casper.getCurrentUrl());
-				casper.capture("thing.png");
-			});
-
 			
-
+			casper.waitForUrl(url + "booking/PLOUGH/payment/full", function() {
+				test.assertTrue(casper.getCurrentUrl() == url + "booking/PLOUGH/payment/full", "Check that the booking form has been successfully forwarded.");
+			});
 		}).run(function() {
 			
 			test.done();
