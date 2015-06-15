@@ -69,11 +69,14 @@ casper.start(casper.cli.get("target"), function(){
 			});
 		}).then(function() {
 			test.comment("Filling in all the relevant form fields.");
+			
+	
+
 			casper.fill("form[id='bookingForm']", {
 				"title": "Mr",
 				"firstName": "Oliver",
 				"surname": "Barnwell",
-				"daytimePhone": "0447477533308",
+				"daytimePhone": "07477533308",
 				"email": "oliver@neontribe.co.uk",
 				"addr1": "21 Colegate",
 				"town": "Norwich",
@@ -84,15 +87,34 @@ casper.start(casper.cli.get("target"), function(){
 				"paymentchoice": "vcredit"
 			});
 
-			this.click("input[name='terms']");
-			this.click("a#pay-now");
+			casper.click("input[name='terms']");
+
+			casper.waitForSelectorTextChange(".row.guest-item", function() {
+				casper.fill("form[id='bookingForm']", {
+					"adultTitle1": "Mr",
+					"adultAge1": "65+"
+				});
+
+				casper.waitForSelector("#source", function() {
+
+				});
+			});
+
+			casper.wait(5000);
+					
+		}).then(function() {
+
+			casper.click("a#pay-now");
 
 			casper.then(function() {
+				console.log(casper.getCurrentUrl());
 				casper.capture("thing.png");
 			});
 
+			
 
 		}).run(function() {
+			
 			test.done();
 		}).viewport(1920, 1080);
 	});
