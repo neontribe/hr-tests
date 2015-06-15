@@ -1,6 +1,7 @@
 //Tests all menu blocks for expected behaviour.
-var url = "https://neontabs.neontribe.org/latest/hr/"
-var base_url = "https://neontabs.neontribe.org"
+
+var url = casper.cli.get("home");
+var base_url = casper.cli.get("baseurl");
 var link_count = 0;
 var tests = 0;
 
