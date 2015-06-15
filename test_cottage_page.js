@@ -1,9 +1,11 @@
 //Travels to a supplied cottage page and runs a suite of tests
 
-var url = "https://neontabs.neontribe.org/latest/hr/";
-var base_url = "https://neontabs.neontribe.org";
+var url = casper.cli.get("home");
+
 var link_count = 0;
 var tests = 0;
+
+var current_url = null;
 
 var area_heading = {
 	label: "Suffolk Cottages",
@@ -28,8 +30,12 @@ function pickRandomFromArray(arr) {
 }
 //--//
 
+casper.on("load.finished", function() {
+	current_url = casper.getCurrentUrl();
+});
+
 casper.start(casper.cli.get("target"), function() {}).run(function() {
-	casper.test.begin("Property Page Testing", tests, function suite(test) {
+	casper.test.begin("Property Page Loading", tests, function suite(test) {
 		casper.start(casper.cli.get("target"), function checkPropertyPage() {
 			test.comment("Travelling to supplied area");
 			casper.mouse.move(area_heading.selector);
@@ -37,12 +43,9 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 				casper.clickLabel(area.label, "a")
 			});
 		}).then(function() {
-			//Check intro content
 			var intro_content_suffolk = this.fetchText("div[role='note'] > div");
 			test.assertTrue(intro_content_suffolk.length > 1, "Check if introduction article contains text.")
-			//Pick a random cottage
 			var names = [];
-			//Grab a list of all cottages displayed on the current page.
 			var properties_returned_names = casper.evaluate(function() {
 				var properties_in_document = document.querySelectorAll(".rich-listing");
 				return Array.prototype.map.call(properties_in_document, function(e) {
@@ -60,10 +63,8 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 				test.assertTrue(page_title == tmp_cottage_to_check, "Check that we have travelled to correct property page: " + page_title);
 			});
 		}).then(function() {
-			//Check introduction content
 			var intro_content = this.fetchText(".details figcaption p");
 			test.assertTrue(intro_content.length > 1, "Check if introduction article contains text.");
-			//Verify that the 'read more' button works correctly
 			var tmp_height = casper.evaluate(function() {
 				return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
 			});
@@ -71,7 +72,6 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 			casper.clickLabel("Read more", "a");
 			
 			casper.then(function() {
-				//wait for dropdown of read more content
 				casper.wait(1000, function() {
 					var new_height = casper.evaluate(function() {
 						return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
@@ -81,49 +81,60 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 				}).then(function() {
 					test.comment("Collapsing read more.")
 					new_height = casper.evaluate(function() {
-								return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
+						return parseInt(document.getElementsByClassName("fulldescription")[0].style.height.split("px")[0], 10);
 					});
 					test.assertTrue(tmp_height < new_height  , "Check that the read more button 'un-expands' the description");
 				});
 			});
-		}).then(function() {
-			//Verify that content tabs work;
-			//Reviews content tab;
+			
+		}).run(function() {
+			test.done();
+		}).viewport(1920, 1080);
+	});
+
+	casper.test.begin("Check review tabs", tests, function suite(test) {
+		casper.start(current_url, function checkReviewTabs() {
 			test.comment("Click reviews tab.");
 			casper.click("a[href='#reviews']");
-			casper.then(function() {
-					var state = this.evaluate(function() {
-						return document.getElementById("reviews").className;
-					});
-					test.assertTrue(state.indexOf("showing") > -1, "Check that the reviews panel has class 'showing'.");
-					test.assertVisible("#reviews", "Check that the reviews panel is visible.");
-					test.comment("Click Prices and availability tab");
-					casper.click("a[href='#prices-and-availability']");
-				}).then(function() {
-					var state = this.evaluate(function() {
-						return document.getElementById("prices-and-availability").className;
-					});
-					test.assertTrue(state.indexOf("showing") > -1, "Check that the prices and availability panel has class 'showing'.");
-					test.assertVisible("#prices-and-availability", "Check that the prices-and-availability panel is visible.");
-					test.comment("Click town-village-guide tab");
-					casper.click("a[href='#town-village-guide']");
-				}).then(function() {
-					var state = this.evaluate(function() {
-						return document.getElementById("town-village-guide").className;
-					});
-					test.assertTrue(state.indexOf("showing") > -1, "Check that the town and village guide tab has class 'showing'.");
-					test.assertVisible("#town-village-guide", "Check that the town-village-guide is visible.");
-					test.comment("Click property-overview tab");
-					casper.click("a[href='#property-overview']");
-				}).then(function() {
-					var state = this.evaluate(function() {
-						return document.getElementById("property-overview").className;
-					});
-					test.assertTrue(state.indexOf("showing") > -1, "Check that the property-overview tab has class 'showing'.");
-					test.assertVisible("#property-overview", "Check that the property-overview panel is visible.");
-				});
 		}).then(function() {
-			//Check shortlist functionality.
+				var state = this.evaluate(function() {
+					return document.getElementById("reviews").className;
+				});
+				test.assertTrue(state.indexOf("showing") > -1, "Check that the reviews panel has class 'showing'.");
+				test.assertVisible("#reviews", "Check that the reviews panel is visible.");
+				test.comment("Click Prices and availability tab");
+				casper.click("a[href='#prices-and-availability']");
+			}).then(function() {
+				var state = this.evaluate(function() {
+					return document.getElementById("prices-and-availability").className;
+				});
+				test.assertTrue(state.indexOf("showing") > -1, "Check that the prices and availability panel has class 'showing'.");
+				test.assertVisible("#prices-and-availability", "Check that the prices-and-availability panel is visible.");
+				test.comment("Click town-village-guide tab");
+				casper.click("a[href='#town-village-guide']");
+			}).then(function() {
+				var state = this.evaluate(function() {
+					return document.getElementById("town-village-guide").className;
+				});
+				test.assertTrue(state.indexOf("showing") > -1, "Check that the town and village guide tab has class 'showing'.");
+				test.assertVisible("#town-village-guide", "Check that the town-village-guide is visible.");
+				test.comment("Click property-overview tab");
+				casper.click("a[href='#property-overview']");
+			}).then(function() {
+				var state = this.evaluate(function() {
+					return document.getElementById("property-overview").className;
+				});
+				test.assertTrue(state.indexOf("showing") > -1, "Check that the property-overview tab has class 'showing'.");
+				test.assertVisible("#property-overview", "Check that the property-overview panel is visible.");
+			}).run(function() {
+				test.done();
+			}).viewport(1920, 1080);
+		})
+
+	casper.test.begin("Check property shortlist functionality", tests, function suite(test) {
+		casper.start(current_url, function checkShortlist() {
+
+		}).then(function() {
 			test.comment("Clicking add to shortlist button.");
 			casper.click("a.add-to-shortlist");
 			casper.waitForSelectorTextChange("a.add-to-shortlist", function(e) {
@@ -144,12 +155,13 @@ casper.start(casper.cli.get("target"), function() {}).run(function() {
 						return e.getElementsByClassName("title-and-review")[0].getElementsByTagName("h3")[0].getElementsByTagName("a")[0].innerText;
 					});
 				});
-
 				test.comment("Checking if there is a matching property.");
 				test.assert(properties_returned_names.indexOf(tmp_cottage_to_check) > -1, "Check that shortlist properties includes test property.");
 			});
 		}).run(function() {
 			test.done();
 		}).viewport(1920, 1080);
+	
+
 	});
 });
