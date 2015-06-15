@@ -51,9 +51,9 @@ casper.start(casper.cli.get("target"), function(){
 				 });
 			});
 		 
-
 			var valid_day_combos = getSevenDays(date_list);
 			//TODO: Check more pages (not just the first)
+
 			//check each combo until we hit a combo that works
 			casper.each(valid_day_combos, function(self, obj) {
 				casper.then(function() {
@@ -62,14 +62,36 @@ casper.start(casper.cli.get("target"), function(){
 						casper.click("td[id='"+obj[1]+"']");
 					}
 				});
+			}).then(function() {
+				casper.click("a.book-now.enabled");
+			}).then(function() {
+				casper.clickLabel("Continue", "a");
+			});
+		}).then(function() {
+			test.comment("Filling in all the relevant form fields.");
+			casper.fill("form[id='bookingForm']", {
+				"title": "Mr",
+				"firstName": "Oliver",
+				"surname": "Barnwell",
+				"daytimePhone": "0447477533308",
+				"email": "oliver@neontribe.co.uk",
+				"addr1": "21 Colegate",
+				"town": "Norwich",
+				"county": "Norfolk",
+				"postcode":"NR1 3BN",
+				"party": "1",
+				"altsource": "Website",
+				"paymentchoice": "vcredit"
+			});
+
+			this.click("input[name='terms']");
+			this.click("a#pay-now");
+
+			casper.then(function() {
+				casper.capture("thing.png");
 			});
 
 
-		casper.then(function() {
-			casper.capture("thing.png");
-		})
-	
-			
 		}).run(function() {
 			test.done();
 		}).viewport(1920, 1080);
