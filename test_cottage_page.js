@@ -1,6 +1,7 @@
 //Travels to a supplied cottage page and runs a suite of tests
 
-var url = casper.cli.get("home");
+var url = casper.cli.get("target");
+var base_url =  casper.cli.get("target").slice(url.length - 1)[1];
 
 var link_count = 0;
 var tests = 0;
