@@ -13,7 +13,7 @@ fi
 # MOOTOOLS="--mootools=`locate -l 1 neontabs_casper/resources/mootools.js`"
 # LEVEN="--leven=`locate -l 1 neontabs_casper/resources/String.levenshtein.js`"
 REPORTING="--reportfails --screencapfails"
-# INCLUDES="--includes=`locate -l 1 neontabs_casper/resources/casper_util.js`"
+INCLUDES="--includes=`locate -l 1 ./resources/util.js`"
 
 if [ ! -z "$JENKINS_URL" ]; then
   NOCOLORS="--no-colors"
@@ -37,7 +37,7 @@ fi
 
 for file in "$2"*.js
 do
-	casperjs test $NOCOLORS --xunit=casper-out."$file" $NOCOLORS --target="$1" "$file"
+	casperjs test $NOCOLORS $INCLUDES --xunit=casper-out."$file" $NOCOLORS --target="$1" "$file"
 	status=$(($status+$?))
 done
 

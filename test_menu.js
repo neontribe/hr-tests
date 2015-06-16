@@ -21,7 +21,7 @@ casper.start(casper.cli.get("target"), function(){
 	});	
 
   	link_count = menu_links.length + dropdown_links.length;
-
+	tests = link_count + 9;
 
 }).run(function(){
 	casper.test.begin('Menu Behaviour', tests, function suite(test) {

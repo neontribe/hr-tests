@@ -52,13 +52,12 @@ casper.test.begin('Booking Behaviour', tests, function suite(test) {
 		//TODO: Check more pages (not just the first)
 
 		//check each combo until we hit a combo that works
-		var clickable_count = 0;
+		var clickable_count = valid_day_combos.length;
 		casper.each(valid_day_combos, function(self, obj) {
 			casper.then(function() {
 				if(!casper.exists("a.book-now.enabled")) {
 					casper.click("td[id='"+obj[0]+"']");
 					casper.click("td[id='"+obj[1]+"']");		
-					clickable_count++;
 				}
 			});
 		});
@@ -87,7 +86,7 @@ casper.test.begin('Booking Behaviour', tests, function suite(test) {
 		test.comment("Filling in all the relevant form fields.");
 		
 
-
+		casper.test.done();	
 		casper.fill("form[id='bookingForm']", {
 			"title": "Mr",
 			"firstName": "Oliver",
