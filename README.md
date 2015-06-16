@@ -5,7 +5,7 @@ CasperJS tests for the Heritage hideaways site.
 
 sh run_tests.sh https://hr.neontribe.org/ ./
 
-#Notes
+##Notes
 To use with live site run with flags:
 
 --ssl-protocol=tlsv1 --ignore-ssl-errors=true
