@@ -9,7 +9,7 @@ casper.start(casper.cli.get("target"), function(){  }).run(function() {
 		casper.start(casper.cli.get("target"), function checkPets() {
 			test.comment("Clicking 'Pet friendly cottages' link.");		
 			casper.thenClick("div .pet-friendly-cottages h3 > a", function() {
-				test.assertTrue(this.getCurrentUrl() == url + "per-friendly-cottages", "Check if 'pet friendly cottages' button points to correct page.");
+				test.assertTrue(this.getCurrentUrl() == url + "pet-friendly-holiday-cottages", "Check if 'pet friendly cottages' button points to correct page.");
 				test.comment("Going back to hompage using back button.");
 			});
 			//Back using back button
@@ -26,7 +26,7 @@ casper.start(casper.cli.get("target"), function(){  }).run(function() {
 			casper.thenClick("div .let-your-property h3 > a", function() {
 				test.assertTrue(this.getCurrentUrl() == url + "letyourproperty.html", "Check if 'let your property' button points to correct page.");
 			});
-			casper.thenClick("header[role='banner'] h1 > a[href='/latest/hr/']", function() {
+			casper.thenClick("header[role='banner'] h1 > a[href='/']", function() {
 					test.comment("Going back to homepage using Heritage Hideaways logo.");		
 			}).then(function() {
 				//If for some reason this doesn't work manually place us back at the homepage.

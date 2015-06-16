@@ -10,9 +10,9 @@ var test_property = {
 	area: "norfolk-cottages"
 };
 
-casper.start(casper.cli.get("target"), function() {  }).run(function() {
+casper.start(url, function() {  }).run(function() {
 	casper.test.begin("Search Criteria Testing", tests, function suite(test) {
-		casper.start(casper.cli.get("target"), function checkReferenceSearch() {
+		casper.start(url, function checkReferenceSearch() {
 			test.comment("Selecting 'Norfolk Cottages' option.");
 			casper.thenClick("li.dropdown-norfolk a", function() {
 				test.assertTrue(this.getCurrentUrl() == url + "norfolk-cottages", "Norfolk Cottages page Reached.");
@@ -20,7 +20,9 @@ casper.start(casper.cli.get("target"), function() {  }).run(function() {
 				test.comment("Searching for property reference: " + test_property.reference);
 				//Set ref field to reference;
 				casper.sendKeys("input#schPropName", test_property.reference);
-				casper.thenClick("form[action='/latest/hr/holiday-cottages/search/filtered'] input[type='submit']", function() {
+
+				casper.capture("thing.png");
+				casper.thenClick("div.search-form input[type='submit']", function() {
 					test.comment("Submitted reference search.");
 					test.assertTrue(this.getCurrentUrl() == url + "holiday-cottages/search/filtered?name="+ test_property.reference +"&area=&accommodates=&fromDate=&nights=&orderBy=&rating=", "Correct search page reached");
 				});
@@ -43,7 +45,7 @@ casper.start(casper.cli.get("target"), function() {  }).run(function() {
 		}).then(function() {
 			//Apply 'internet search criteria', check for cottage not found message
 			casper.thenClick("#schInternet", function() {
-				casper.thenClick("form[action='/latest/hr/holiday-cottages/search/filtered'] input[type='submit']", function() {
+				casper.thenClick("div.search-form input[type='submit']", function() {
 					//this is a rather dubious way of getting a "no cottage" return message because it is possible that internet access could be added.
 					//TODO: a better method should be devised
 					test.comment("Submitted second reference search (check for no cottage found)");
@@ -61,7 +63,7 @@ casper.start(casper.cli.get("target"), function() {  }).run(function() {
         		document.querySelector('select#schArea').selectedIndex = 4;
         		return true;
 			});
-			casper.thenClick("form[action='/latest/hr/holiday-cottages/search/filtered'] input[type='submit']", function() {
+			casper.thenClick("div.search-form input[type='submit']", function() {
 					test.comment("Submitted reference search with `cromer and area` selected.");
 					test.assertTrue(this.getCurrentUrl() == url + "holiday-cottages/search/filtered?name="+ test_property.reference +"&area=CROME&accommodates=&fromDate=&nights=&orderBy=&rating=", "Correct search page reached");
 					var properties_returned_length = casper.evaluate(function() {

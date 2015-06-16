@@ -15,7 +15,7 @@ casper.start(casper.cli.get("target"), function(){
 		return links_in_header.length;
 	})
 
-	link_count = (links_footer_length + links_header_length) - 3 // -3 because we're not including _blank pages;
+	link_count = (links_footer_length + links_header_length) - 4 // -4 because we're not including _blank pages;
 	tests = link_count;
 }).run(function() {
 	
@@ -52,8 +52,13 @@ casper.start(casper.cli.get("target"), function(){
 			//Check each link in footer "we have holiday cottages..." and "other links..."
 			casper.each(links, function(s, l) {
 				s.thenClick("footer a[href='"+l+"']", function(response){
-					//test.assertTrue(this.getCurrentUrl() == base_url + l, "Check if correct page loaded from footer: " + base_url + l);	
-					test.assert((this.getCurrentUrl() == base_url + l), "Check if correct page loaded from footer: " + base_url + l);
+					
+					if(l == "javascript:void(0);") {
+						
+					} else {
+						test.assert((this.getCurrentUrl() == base_url + l), "Check if correct page loaded from footer: " + base_url + l);	
+					}
+					
 
 				});
 			});

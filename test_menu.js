@@ -69,7 +69,11 @@ casper.start(casper.cli.get("target"), function(){
 		//Check each of the main menu links
 		casper.each(menu_links, function(self, link){
 			self.thenClick("ul.main-menu > li > a[href='" + link + "']", function() {
-				test.assertTrue(this.getCurrentUrl() == base_url + link, "Check if correct page loaded: " + base_url + link);
+				if(link == "javascript:void(0);") {
+						
+				} else {
+					test.assertTrue(this.getCurrentUrl() == base_url + link, "Check if correct page loaded: " + base_url + link);
+				}
 			});
 		});
 	}).then(function() {
