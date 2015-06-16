@@ -1,6 +1,6 @@
 //Tests all menu blocks for expected behaviour.
-var url = "https://neontabs.neontribe.org/latest/hr/"
-var base_url = "https://neontabs.neontribe.org"
+var url = casper.cli.get("target");
+var base_url =  casper.cli.get("target").substr(0, url.length - 1);
 var link_count = 0;
 var tests = link_count + 10;
 
@@ -42,17 +42,21 @@ casper.start(casper.cli.get("target"), function(){
 			test.assertTrue(text_content == expected[i],  "Check if menu item: " + expected[i] + " exists.");
 		};
 	}).then(function checkDropdowns() {
+
 		casper.mouse.move("li.dropdown-suffolk");
-		casper.waitUntilVisible("li.dropdown.suffolk", function success() {
+
+		casper.waitUntilVisible("li.dropdown.suffolk").then(function() {
 			test.assertVisible("li.dropdown.suffolk", "Check if suffolk dropdown visible.");
-			casper.mouse.move("li.dropdown-norfolk")
-			casper.waitUntilVisible("li.dropdown.norfolk", function success() {
-				test.assertVisible("li.dropdown.norfolk", "Check if norfolk dropdown visible.");
-				casper.mouse.move("li.dropdown-item.dropdown-coastal");
-				casper.waitUntilVisible("li.dropdown.coastal.dropdown", function success() {
-					test.assertVisible("li.dropdown.coastal.dropdown", "Check if coastal dropdown visible.");
-				});
-			});
+			casper.mouse.move("li.dropdown-norfolk");
+		});
+			
+		casper.waitUntilVisible("li.dropdown.norfolk").then(function() {
+			test.assertVisible("li.dropdown.norfolk", "Check if norfolk dropdown visible.");
+			casper.mouse.move("li.dropdown-item.dropdown-coastal");
+		});
+
+		casper.waitUntilVisible("li.dropdown.coastal.dropdown").then(function() {
+				test.assertVisible("li.dropdown.coastal.dropdown", "Check if coastal dropdown visible.");
 		});
 	}).then(function checkMainMenuLinks() {
 		var menu_links = casper.evaluate(function() {
